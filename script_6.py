@@ -1,0 +1,649 @@
+# Create templates directory and index.html
+import os
+
+# Create templates directory
+os.makedirs('templates', exist_ok=True)
+
+# Create the main index.html template
+index_html_content = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial News Extraction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .articles-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .article-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .article-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .article-meta {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .article-summary {
+            color: #495057;
+            line-height: 1.5;
+        }
+        
+        .newsletter-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #99d1ff;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Financial News Extraction System</h1>
+            <p>AI-Powered Newsletter Generation - 100% Free & Open Source</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Scraping Configuration -->
+            <div class="card">
+                <h2>🔍 Configure News Sources</h2>
+                <form id="scrapeForm">
+                    <div class="form-group">
+                        <label>Select News Sources:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="yahoo" name="sources" value="yahoo" checked>
+                                <label for="yahoo">Yahoo Finance</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="reuters" name="sources" value="reuters" checked>
+                                <label for="reuters">Reuters Business</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="marketwatch" name="sources" value="marketwatch" checked>
+                                <label for="marketwatch">MarketWatch</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cnbc" name="sources" value="cnbc">
+                                <label for="cnbc">CNBC</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="benzinga" name="sources" value="benzinga">
+                                <label for="benzinga">Benzinga</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="daysBack">Days to Look Back:</label>
+                        <select class="form-control" id="daysBack" name="days_back">
+                            <option value="1">1 Day</option>
+                            <option value="3">3 Days</option>
+                            <option value="7" selected>1 Week</option>
+                            <option value="14">2 Weeks</option>
+                            <option value="30">1 Month</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">🚀 Start Scraping & Analysis</button>
+                </form>
+                
+                <div id="progressContainer" class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Initializing...</div>
+                </div>
+            </div>
+            
+            <!-- Statistics -->
+            <div id="statsContainer" class="stats" style="display: none;">
+                <div class="stat-card">
+                    <span id="totalArticles" class="stat-number">0</span>
+                    <span class="stat-label">Articles Scraped</span>
+                </div>
+                <div class="stat-card">
+                    <span id="totalSources" class="stat-number">0</span>
+                    <span class="stat-label">Sources</span>
+                </div>
+                <div class="stat-card">
+                    <span id="avgSentiment" class="stat-number">0.0</span>
+                    <span class="stat-label">Avg Sentiment</span>
+                </div>
+                <div class="stat-card">
+                    <span id="avgImportance" class="stat-number">0.0</span>
+                    <span class="stat-label">Avg Importance</span>
+                </div>
+            </div>
+            
+            <!-- Newsletter Generation -->
+            <div id="newsletterSection" class="newsletter-section">
+                <div class="card">
+                    <h2>📄 Generate Newsletter</h2>
+                    <form id="newsletterForm">
+                        <div class="form-group">
+                            <label for="newsletterTitle">Newsletter Title:</label>
+                            <input type="text" class="form-control" id="newsletterTitle" 
+                                   value="Financial Newsletter - June 2025" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="minImportance">Minimum Importance Score:</label>
+                            <select class="form-control" id="minImportance">
+                                <option value="0.0">All Articles</option>
+                                <option value="0.3">Low Priority (0.3+)</option>
+                                <option value="0.5" selected>Medium Priority (0.5+)</option>
+                                <option value="0.7">High Priority (0.7+)</option>
+                                <option value="0.8">Critical Only (0.8+)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="maxArticles">Maximum Articles:</label>
+                            <select class="form-control" id="maxArticles">
+                                <option value="10">10 Articles</option>
+                                <option value="20" selected>20 Articles</option>
+                                <option value="30">30 Articles</option>
+                                <option value="50">50 Articles</option>
+                            </select>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="submit" data-format="html" class="btn btn-primary">📄 Generate HTML Newsletter</button>
+                            <button type="submit" data-format="csv" class="btn btn-info">📊 Export as CSV</button>
+                            <button type="submit" data-format="json" class="btn btn-secondary">💾 Export as JSON</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Articles Preview -->
+            <div id="articlesSection" class="articles-section">
+                <div class="card">
+                    <h2>📰 Latest Articles</h2>
+                    <div id="articlesList"></div>
+                    <button id="loadMoreArticles" class="btn btn-secondary" style="display: none;">Load More Articles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOffset = 0;
+        let isLoading = false;
+
+        // Form submission for scraping
+        document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (isLoading) return;
+            isLoading = true;
+            
+            const formData = new FormData(e.target);
+            const sources = formData.getAll('sources');
+            const daysBack = parseInt(formData.get('days_back'));
+            
+            if (sources.length === 0) {
+                alert('Please select at least one news source.');
+                isLoading = false;
+                return;
+            }
+            
+            // Show progress container
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('statsContainer').style.display = 'none';
+            document.getElementById('newsletterSection').style.display = 'none';
+            document.getElementById('articlesSection').style.display = 'none';
+            
+            try {
+                // Start scraping
+                const response = await fetch('/api/scrape', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({sources, days_back: daysBack})
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to start scraping');
+                }
+                
+                // Poll for status updates
+                pollStatus();
+                
+            } catch (error) {
+                alert('Error starting scraper: ' + error.message);
+                document.getElementById('progressContainer').style.display = 'none';
+                isLoading = false;
+            }
+        });
+
+        // Poll scraping status
+        async function pollStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                
+                // Update progress
+                document.getElementById('progressFill').style.width = status.progress + '%';
+                document.getElementById('progressText').textContent = status.message;
+                
+                if (status.status === 'completed') {
+                    document.getElementById('progressContainer').style.display = 'none';
+                    await loadStats();
+                    await loadArticles();
+                    document.getElementById('newsletterSection').style.display = 'block';
+                    isLoading = false;
+                } else if (status.status === 'error') {
+                    document.getElementById('progressContainer').style.display = 'none';
+                    alert('Error during scraping: ' + status.message);
+                    isLoading = false;
+                } else {
+                    // Continue polling
+                    setTimeout(pollStatus, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Error polling status:', error);
+                setTimeout(pollStatus, 5000);
+            }
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                
+                document.getElementById('totalArticles').textContent = stats.total_articles;
+                document.getElementById('totalSources').textContent = stats.total_sources;
+                document.getElementById('avgSentiment').textContent = stats.average_sentiment.toFixed(2);
+                document.getElementById('avgImportance').textContent = stats.average_importance.toFixed(2);
+                
+                document.getElementById('statsContainer').style.display = 'grid';
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load articles
+        async function loadArticles(offset = 0) {
+            try {
+                const response = await fetch(`/api/articles?limit=10&offset=${offset}`);
+                const articles = await response.json();
+                
+                const articlesList = document.getElementById('articlesList');
+                
+                if (offset === 0) {
+                    articlesList.innerHTML = '';
+                    currentOffset = 0;
+                }
+                
+                articles.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'article-item';
+                    articleDiv.innerHTML = `
+                        <div class="article-title">${article.title}</div>
+                        <div class="article-meta">
+                            <strong>${article.source.toUpperCase()}</strong> • 
+                            Sentiment: ${article.sentiment_score.toFixed(2)} • 
+                            Importance: ${article.importance_score.toFixed(2)} • 
+                            Category: ${article.category}
+                        </div>
+                        <div class="article-summary">${article.summary || 'No summary available'}</div>
+                    `;
+                    articlesList.appendChild(articleDiv);
+                });
+                
+                currentOffset += articles.length;
+                
+                // Show load more button if there are more articles
+                document.getElementById('loadMoreArticles').style.display = 
+                    articles.length === 10 ? 'block' : 'none';
+                
+                document.getElementById('articlesSection').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading articles:', error);
+            }
+        }
+
+        // Load more articles
+        document.getElementById('loadMoreArticles').addEventListener('click', () => {
+            loadArticles(currentOffset);
+        });
+
+        // Newsletter generation
+        document.getElementById('newsletterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = e.submitter;
+            const format = button.dataset.format;
+            
+            const title = document.getElementById('newsletterTitle').value;
+            const minImportance = parseFloat(document.getElementById('minImportance').value);
+            const maxArticles = parseInt(document.getElementById('maxArticles').value);
+            
+            button.disabled = true;
+            button.textContent = 'Generating...';
+            
+            try {
+                const response = await fetch('/api/newsletter/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        title,
+                        min_importance: minImportance,
+                        max_articles: maxArticles,
+                        format
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to generate newsletter');
+                }
+                
+                const result = await response.json();
+                
+                // Download the file
+                window.open(`/api/newsletter/download/${result.filename}`, '_blank');
+                
+                // Show success message
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success';
+                alert.textContent = `Newsletter generated successfully! ${result.article_count} articles included.`;
+                document.getElementById('newsletterSection').prepend(alert);
+                
+                setTimeout(() => alert.remove(), 5000);
+                
+            } catch (error) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.textContent = 'Error generating newsletter: ' + error.message;
+                document.getElementById('newsletterSection').prepend(alert);
+                
+                setTimeout(() => alert.remove(), 5000);
+            } finally {
+                button.disabled = false;
+                if (format === 'html') button.textContent = '📄 Generate HTML Newsletter';
+                else if (format === 'csv') button.textContent = '📊 Export as CSV';
+                else button.textContent = '💾 Export as JSON';
+            }
+        });
+    </script>
+</body>
+</html>'''
+
+with open('templates/index.html', 'w', encoding='utf-8') as f:
+    f.write(index_html_content)
+
+print("✅ Created templates/index.html - Main web interface")
+print("File size:", len(index_html_content), "characters")
